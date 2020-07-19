@@ -3,6 +3,8 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
+namespace Yarn.Unity
+{
 /// <summary>
 /// Steps required by YarnSpinner for a working build.
 /// </summary>
@@ -39,4 +41,5 @@ public class OnBuildYarnSpinner : IPreprocessBuildWithReport, IPostprocessBuildW
     static string GetResourcesPath () {
         return Application.dataPath + "/Resources";
     }
+}
 }

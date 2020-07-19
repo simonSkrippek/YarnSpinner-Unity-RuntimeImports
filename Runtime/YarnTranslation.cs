@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
+namespace Yarn.Unity
+{
 /// <summary>
 /// Represent a .yarn file in a different language.
 /// </summary>
@@ -22,4 +24,5 @@ public class YarnTranslation
     /// The csv string table containing the translated text.
     /// </summary>
     public TextAsset text;
+}
 }

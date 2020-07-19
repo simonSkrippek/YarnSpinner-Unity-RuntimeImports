@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+namespace Yarn.Unity
+{
 /// <summary>
 /// Yarn's project wide settings that will automatically be included in a
 /// build and not altered after that.
@@ -126,4 +128,5 @@ public class ProjectSettings : ScriptableObject {
     public static void WriteProjectSettingsToDisk() {
         YarnSettingsHelper.WritePreferencesToDisk(Instance, _settingsPath);
     }
+}
 }

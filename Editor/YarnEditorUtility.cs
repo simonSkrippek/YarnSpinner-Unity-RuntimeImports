@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
+namespace Yarn.Unity
+{
 /// <summary>
 /// Contains utility methods for working with Yarn Spinner content in the
 /// Unity Editor.
@@ -144,4 +146,5 @@ public static class YarnEditorUtility {
             ProjectWindowUtil.ShowCreatedAsset(o);        
         }
     }
+}
 }

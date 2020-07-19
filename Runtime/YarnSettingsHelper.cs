@@ -2,6 +2,8 @@
 using System.IO;
 using UnityEngine;
 
+namespace Yarn.Unity
+{
 /// <summary>
 /// Provides methods for loading and saving a <see
 /// cref="ScriptableObject"/> class used for settings.
@@ -69,4 +71,5 @@ public static class YarnSettingsHelper {
             Debug.LogError("Saving Yarn Spinner preferences to disk failed!");
         }
     }
+}
 }

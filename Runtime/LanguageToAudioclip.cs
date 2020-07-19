@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 #endif
 
+namespace Yarn.Unity
+{
 /// <summary>
 /// A voice over <see cref="AudioClip"/> and its associated language.
 /// </summary>
@@ -31,4 +33,5 @@ public class LanguageToAudioclip {
     /// </summary>
     public AssetReference audioClipAddressable;
 #endif
+}
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 
+namespace Yarn.Unity
+{
 /// <summary>
 /// A linetag and it's corresponding <see cref="UnityEngine.AudioClip"/>
 /// per available language for voice over dialogues.
@@ -20,4 +22,5 @@ public class LinetagToLanguage {
     /// cref="linetag"/> per available language.
     /// </summary>
     public LanguageToAudioclip[] languageToAudioclip = Array.Empty<LanguageToAudioclip>();
+}
 }
