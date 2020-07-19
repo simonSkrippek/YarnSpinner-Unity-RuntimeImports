@@ -2,9 +2,11 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Yarn.Unity {
+namespace Yarn.Unity
+{
     [CustomEditor(typeof(YarnLinesAsCanvasText))]
-    public class YarnLinesAsCanvasTextEditor : Editor {
+    public class YarnLinesAsCanvasTextEditor : Editor
+    {
         private YarnProgram _yarnProgram = default;
         private SerializedProperty _yarnProgramProperty = default;
         private Dictionary<string, string> _yarnStringTable = new Dictionary<string, string>();
@@ -16,19 +18,22 @@ namespace Yarn.Unity {
         private string _lastLanguageId = default;
         private GUIStyle _headerStyle;
 
-        private void OnEnable() {
+        private void OnEnable()
+        {
             _headerStyle = new GUIStyle() { fontStyle = FontStyle.Bold };
             _lastLanguageId = Preferences.TextLanguage;
 
             _yarnProgramProperty = serializedObject.FindProperty("yarnScript");
-            if (_yarnProgramProperty.objectReferenceValue == null) {
+            if (_yarnProgramProperty.objectReferenceValue == null)
+            {
                 return;
             }
 
             _yarnProgram = _yarnProgramProperty.objectReferenceValue as YarnProgram;
 
             _yarnStringTable.Clear();
-            foreach (var line in _yarnProgram.GetStringTable()) {
+            foreach (var line in _yarnProgram.GetStringTable())
+            {
                 _yarnStringTable.Add(line.Key, line.Value);
             }
 
@@ -37,26 +42,35 @@ namespace Yarn.Unity {
             _useTextMeshProProperty = serializedObject.FindProperty("_useTextMeshPro");
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             serializedObject.Update();
 
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(_yarnProgramProperty);
             // Rebuild the string table if the yarn asset or the language preference has changed
-            if (EditorGUI.EndChangeCheck() || _lastLanguageId != Preferences.TextLanguage) {
+            if (EditorGUI.EndChangeCheck() || _lastLanguageId != Preferences.TextLanguage)
+            {
                 OnEnable();
             }
 
             EditorGUILayout.PropertyField(_useTextMeshProProperty);
 
-            if (_yarnProgramProperty.objectReferenceValue == null) {
+            if (_yarnProgramProperty.objectReferenceValue == null)
+            {
                 EditorGUILayout.HelpBox("This component needs a yarn asset.", MessageType.Info);
-            } else {
+            }
+            else
+            {
                 _showTextUiComponents = EditorGUILayout.Foldout(_showTextUiComponents, _textUiComponentsLabel);
-                if (_showTextUiComponents) {
-                    if (_yarnStringTable.Count == 0) {
+                if (_showTextUiComponents)
+                {
+                    if (_yarnStringTable.Count == 0)
+                    {
                         EditorGUILayout.HelpBox("Couldn't find any text lines on the referenced Yarn asset.", MessageType.Info);
-                    } else {
+                    }
+                    else
+                    {
                         // Header
                         EditorGUILayout.BeginHorizontal();
                         EditorGUILayout.LabelField("Yarn Text Lines", _headerStyle);
@@ -65,11 +79,14 @@ namespace Yarn.Unity {
 
                         // The referenced Canvas Text components
                         var i = 0;
-                        foreach (var stringTableEntry in _yarnStringTable) {
-                            if (_textObjectsProperty.arraySize <= i) {
+                        foreach (var stringTableEntry in _yarnStringTable)
+                        {
+                            if (_textObjectsProperty.arraySize <= i)
+                            {
                                 _textObjectsProperty.InsertArrayElementAtIndex(i);
                             }
-                            if (_textMeshProObjectsProperty.arraySize <= i) {
+                            if (_textMeshProObjectsProperty.arraySize <= i)
+                            {
                                 _textMeshProObjectsProperty.InsertArrayElementAtIndex(i);
                             }
                             // Draw the actual content of the yarn line as lable so the user knows what text 

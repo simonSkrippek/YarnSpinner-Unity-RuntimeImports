@@ -2,12 +2,14 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Yarn.Unity {
+namespace Yarn.Unity
+{
     /// <summary>
     /// Handles playback of voice over <see cref="AudioClip"/>s referenced
     /// on <see cref="YarnProgram"/>s.
     /// </summary>
-    public class VoiceOverPlaybackUnity : DialogueViewBase {
+    public class VoiceOverPlaybackUnity : DialogueViewBase
+    {
         /// <summary>
         /// The fade out time when <see cref="FinishCurrentLine"/> is
         /// called.
@@ -23,8 +25,10 @@ namespace Yarn.Unity {
         /// </summary>
         private bool finishCurrentLine = false;
 
-        private void Awake() {
-            if (!audioSource) {
+        private void Awake()
+        {
+            if (!audioSource)
+            {
                 audioSource = gameObject.AddComponent<AudioSource>();
                 audioSource.spatialBlend = 0f;
             }
@@ -36,18 +40,21 @@ namespace Yarn.Unity {
         /// </summary>
         /// <param name="dialogueLine"></param>
         /// <returns></returns>
-        public override void RunLine(LocalizedLine dialogueLine, Action onDialogueLineFinished) {
+        public override void RunLine(LocalizedLine dialogueLine, Action onDialogueLineFinished)
+        {
             finishCurrentLine = false;
 
             // Get the localized voice over audio clip
             var voiceOverClip = dialogueLine.AudioClip;
 
-            if (!voiceOverClip) {
+            if (!voiceOverClip)
+            {
                 Debug.Log("Playing voice over failed since the AudioClip of the voice over audio language or the base language was null.", gameObject);
                 onDialogueLineFinished();
                 return;
             }
-            if (audioSource.isPlaying) {
+            if (audioSource.isPlaying)
+            {
                 // Usually, this shouldn't happen because the
                 // DialogueRunner finishes and ends a line first
                 audioSource.Stop();
@@ -55,33 +62,39 @@ namespace Yarn.Unity {
             audioSource.PlayOneShot(voiceOverClip);
 
             StartCoroutine(DoPlayback(onDialogueLineFinished));
-            
+
         }
 
-        private IEnumerator DoPlayback(Action onDialogueLineFinished) {
+        private IEnumerator DoPlayback(Action onDialogueLineFinished)
+        {
 
             // The audioSource started playing before this coroutine
             // started, so as long as the line hasn't been interrupted, we
             // don't need to do anything except wait.
-            while (audioSource.isPlaying && !finishCurrentLine) {
+            while (audioSource.isPlaying && !finishCurrentLine)
+            {
                 yield return null;
             }
 
             // But if the line _does_ become interrupted, we need to wrap
             // up the playback as quickly as we can. We do this here with a
             // fade-out to zero over fadeOutTimeOnLineFinish seconds.
-            if (audioSource.isPlaying && finishCurrentLine) {
+            if (audioSource.isPlaying && finishCurrentLine)
+            {
                 // Fade out voice over clip            
                 float lerpPosition = 0f;
                 float volumeFadeStart = audioSource.volume;
-                while (audioSource.volume != 0) {
+                while (audioSource.volume != 0)
+                {
                     lerpPosition += Time.unscaledDeltaTime / fadeOutTimeOnLineFinish;
                     audioSource.volume = Mathf.Lerp(volumeFadeStart, 0, lerpPosition);
                     yield return null;
                 }
                 audioSource.Stop();
                 audioSource.volume = volumeFadeStart;
-            } else {
+            }
+            else
+            {
                 audioSource.Stop();
             }
 
@@ -97,7 +110,8 @@ namespace Yarn.Unity {
         /// </summary>
         /// <param name="dialogueOptions"></param>
         /// <param name="onOptionSelected"></param>
-        public override void RunOptions(DialogueOption[] dialogueOptions, Action<int> onOptionSelected) {
+        public override void RunOptions(DialogueOption[] dialogueOptions, Action<int> onOptionSelected)
+        {
             // Do nothing
         }
 
@@ -122,7 +136,7 @@ namespace Yarn.Unity {
                 case LineStatus.Ended:
                     // The line is being dismissed; we should ensure that
                     // audio playback has ended.
-                    audioSource.Stop();            
+                    audioSource.Stop();
                     break;
             }
         }

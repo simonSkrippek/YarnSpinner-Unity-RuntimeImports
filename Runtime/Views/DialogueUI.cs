@@ -24,13 +24,14 @@ SOFTWARE.
 
 */
 
-using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace Yarn.Unity {
+namespace Yarn.Unity
+{
     /// <summary>
     /// Displays dialogue lines to the player, and sends user choices back
     /// to the dialogue system.
@@ -253,19 +254,21 @@ namespace Yarn.Unity {
         /// </remarks>
         public UnityEngine.Events.UnityEvent onOptionsEnd;
 
-        internal void Awake ()
+        internal void Awake()
         {
             // Start by hiding the container
             if (dialogueContainer)
                 dialogueContainer.SetActive(false);
 
-            foreach (var button in optionButtons) {
-                button.gameObject.SetActive (false);
+            foreach (var button in optionButtons)
+            {
+                button.gameObject.SetActive(false);
             }
         }
-        
+
         /// <inheritdoc/>
-        public override void RunLine(LocalizedLine dialogueLine, System.Action onDialogueLineFinished) {
+        public override void RunLine(LocalizedLine dialogueLine, System.Action onDialogueLineFinished)
+        {
             StartCoroutine(DoRunLine(dialogueLine, onDialogueLineFinished));
         }
 
@@ -276,50 +279,60 @@ namespace Yarn.Unity {
         /// <param name="onDialogueLineFinished">A callback to invoke when
         /// the text has finished appearing.</param>
         /// <returns></returns>
-        protected IEnumerator DoRunLine(LocalizedLine dialogueLine, System.Action onDialogueLineFinished) {
+        protected IEnumerator DoRunLine(LocalizedLine dialogueLine, System.Action onDialogueLineFinished)
+        {
             onLineStart?.Invoke();
 
             finishCurrentLine = false;
 
             // The final text we'll be showing for this line.
-            string text = string.Empty;            
+            string text = string.Empty;
 
             // Are we hiding the character name?
-            if (showCharacterName == false) {
+            if (showCharacterName == false)
+            {
 
                 // First, check to see if we have it
                 var hasCharacterAttribute = dialogueLine.Text.TryGetAttributeWithName("character", out var characterAttribute);
-                
+
                 // If we do, remove it from the markup, and use the
                 // resulting text
-                if (hasCharacterAttribute) {
+                if (hasCharacterAttribute)
+                {
                     text = dialogueLine.Text.DeleteRange(characterAttribute).Text;
                 }
-            } else {
-                text = dialogueLine.Text.Text; 
+            }
+            else
+            {
+                text = dialogueLine.Text.Text;
             }
 
-            if (textSpeed > 0.0f) {
+            if (textSpeed > 0.0f)
+            {
                 // Display the line one character at a time
-                var stringBuilder = new StringBuilder ();
+                var stringBuilder = new StringBuilder();
 
-                foreach (char c in text) {
-                    stringBuilder.Append (c);
-                    onLineUpdate?.Invoke(stringBuilder.ToString ());
-                    if (finishCurrentLine) {
+                foreach (char c in text)
+                {
+                    stringBuilder.Append(c);
+                    onLineUpdate?.Invoke(stringBuilder.ToString());
+                    if (finishCurrentLine)
+                    {
                         // We've requested a skip of the entire line.
                         // Display all of the text immediately.
                         onLineUpdate?.Invoke(text);
                         break;
                     }
-                    yield return new WaitForSeconds (textSpeed);
+                    yield return new WaitForSeconds(textSpeed);
                 }
-            } else {
+            }
+            else
+            {
                 // Display the entire line immediately if textSpeed <= 0
                 onLineUpdate?.Invoke(text);
             }
 
-            
+
             // Indicate to the rest of the game that the text has finished
             // being delivered
             onTextFinishDisplaying?.Invoke();
@@ -329,7 +342,8 @@ namespace Yarn.Unity {
             onDialogueLineFinished();
         }
 
-        public override void OnLineStatusChanged(LocalizedLine dialogueLine) {
+        public override void OnLineStatusChanged(LocalizedLine dialogueLine)
+        {
 
             switch (dialogueLine.Status)
             {
@@ -354,7 +368,8 @@ namespace Yarn.Unity {
             }
         }
 
-        public override void DismissLine(System.Action onDismissalComplete) {
+        public override void DismissLine(System.Action onDismissalComplete)
+        {
             // This view doesn't need any extra time to dismiss its view,
             // so it can just call onDismissalComplete immediately.
             onDismissalComplete();
@@ -362,18 +377,20 @@ namespace Yarn.Unity {
 
         /// Runs a set of options.
         /// <inheritdoc/>
-        public override void RunOptions (DialogueOption[] dialogueOptions, System.Action<int> onOptionSelected) {
+        public override void RunOptions(DialogueOption[] dialogueOptions, System.Action<int> onOptionSelected)
+        {
             StartCoroutine(DoRunOptions(dialogueOptions, onOptionSelected));
         }
 
         /// Show a list of options, and wait for the player to make a
         /// selection.
-        private  IEnumerator DoRunOptions (DialogueOption[] dialogueOptions, System.Action<int> selectOption)
+        private IEnumerator DoRunOptions(DialogueOption[] dialogueOptions, System.Action<int> selectOption)
         {
             // Do a little bit of safety checking
-            if (dialogueOptions.Length > optionButtons.Count) {
+            if (dialogueOptions.Length > optionButtons.Count)
+            {
                 Debug.LogWarning("There are more options to present than there are" +
-                                 "buttons to present them in. Only the first " + 
+                                 "buttons to present them in. Only the first " +
                                  $"{optionButtons.Count} options will be shown.");
             }
 
@@ -384,27 +401,31 @@ namespace Yarn.Unity {
 
             currentOptionSelectionHandler = selectOption;
 
-            foreach (var dialogueOption in dialogueOptions) {
-                optionButtons [i].gameObject.SetActive (true);
+            foreach (var dialogueOption in dialogueOptions)
+            {
+                optionButtons[i].gameObject.SetActive(true);
 
                 // When the button is selected, tell the dialogue about it
-                optionButtons [i].onClick.RemoveAllListeners();
-                optionButtons [i].onClick.AddListener(() => SelectOption(dialogueOption.DialogueOptionID));
+                optionButtons[i].onClick.RemoveAllListeners();
+                optionButtons[i].onClick.AddListener(() => SelectOption(dialogueOption.DialogueOptionID));
 
                 var optionText = dialogueOption.TextLocalized;
 
-                if (optionText == null) {
+                if (optionText == null)
+                {
                     Debug.LogWarning($"Option {dialogueOption.TextID} doesn't have any localised text");
                     optionText = dialogueOption.TextID;
                 }
 
-                var unityText = optionButtons [i].GetComponentInChildren<Text> ();
-                if (unityText != null) {
+                var unityText = optionButtons[i].GetComponentInChildren<Text>();
+                if (unityText != null)
+                {
                     unityText.text = optionText;
                 }
 
-                var textMeshProText = optionButtons [i].GetComponentInChildren<TMPro.TMP_Text> ();
-                if (textMeshProText != null) {
+                var textMeshProText = optionButtons[i].GetComponentInChildren<TMPro.TMP_Text>();
+                if (textMeshProText != null)
+                {
                     textMeshProText.text = optionText;
                 }
 
@@ -414,13 +435,15 @@ namespace Yarn.Unity {
             onOptionsStart?.Invoke();
 
             // Wait until the chooser has been used and then removed 
-            while (waitingForOptionSelection) {
+            while (waitingForOptionSelection)
+            {
                 yield return null;
             }
 
             // Hide all the buttons
-            foreach (var button in optionButtons) {
-                button.gameObject.SetActive (false);
+            foreach (var button in optionButtons)
+            {
+                button.gameObject.SetActive(false);
             }
 
             onOptionsEnd?.Invoke();
@@ -428,7 +451,7 @@ namespace Yarn.Unity {
 
         /// Called when the dialogue system has started running.
         /// <inheritdoc/>
-        public override void DialogueStarted ()
+        public override void DialogueStarted()
         {
             // Enable the dialogue controls.
             if (dialogueContainer)
@@ -439,7 +462,7 @@ namespace Yarn.Unity {
 
         /// Called when the dialogue system has finished running.
         /// <inheritdoc/>
-        public override void DialogueComplete ()
+        public override void DialogueComplete()
         {
             onDialogueEnd?.Invoke();
 
@@ -459,8 +482,10 @@ namespace Yarn.Unity {
         /// </remarks>
         /// <param name="optionID">The <see cref="OptionSet.Option.ID"/> of
         /// the <see cref="OptionSet.Option"/> that was selected.</param>
-        public void SelectOption(int optionID) {
-            if (!waitingForOptionSelection) {
+        public void SelectOption(int optionID)
+        {
+            if (!waitingForOptionSelection)
+            {
                 Debug.LogWarning("An option was selected, but the dialogue UI was not expecting it.");
                 return;
             }
@@ -468,6 +493,6 @@ namespace Yarn.Unity {
             currentOptionSelectionHandler?.Invoke(optionID);
         }
 
-        
+
     }
 }

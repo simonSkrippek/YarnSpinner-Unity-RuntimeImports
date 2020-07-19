@@ -15,7 +15,8 @@ using Yarn.Unity;
 /// Custom inspector for a Yarn asset imported via the <see cref="ScriptedImporter"/>.
 /// </summary>
 [CustomEditor(typeof(YarnImporter))]
-public class YarnImporterEditor : ScriptedImporterEditor {
+public class YarnImporterEditor : ScriptedImporterEditor
+{
 
     int selectedLanguageIndex;
 
@@ -44,28 +45,36 @@ public class YarnImporterEditor : ScriptedImporterEditor {
     private const string _audioVoiceOverInitializeHelpBox = "Hit 'Apply' to initialize the currently selected voice over language!";
     private const string _audioVoiceOverNoYarnLinesOnAsset = "No yarn lines found on this asset so no voice overs can be linked to lines.";
 
-    public override void OnEnable() {
+    public override void OnEnable()
+    {
         base.OnEnable();
         baseLanguageIdProperty = serializedObject.FindProperty("baseLanguageID");
         _culturesAvailable = Cultures.AvailableCultures;
 
         // Check for situations where we don't want to apply the project settings (for instance, if no settings have been made at all ...)
-        if (ProjectSettings.TextProjectLanguages.Count > 0 && (string.IsNullOrEmpty(baseLanguageIdProperty.stringValue) || ProjectSettings.TextProjectLanguages.Contains(baseLanguageIdProperty.stringValue))) {
+        if (ProjectSettings.TextProjectLanguages.Count > 0 && (string.IsNullOrEmpty(baseLanguageIdProperty.stringValue) || ProjectSettings.TextProjectLanguages.Contains(baseLanguageIdProperty.stringValue)))
+        {
             // Reduce the available languages to the list defined on the project settings
             _culturesAvailable = Cultures.LanguageNamesToCultures(ProjectSettings.TextProjectLanguages.ToArray());
         }
-        if (string.IsNullOrEmpty(baseLanguageIdProperty.stringValue)) {
-            if (ProjectSettings.TextProjectLanguages.Count > 0) {
+        if (string.IsNullOrEmpty(baseLanguageIdProperty.stringValue))
+        {
+            if (ProjectSettings.TextProjectLanguages.Count > 0)
+            {
                 // Use first language from project settings as base language
                 selectedLanguageIndex = 0;
-            } else {
+            }
+            else
+            {
                 // Use system's language as base language if no project settings are defined
                 selectedLanguageIndex = _culturesAvailable.
                     Select((culture, index) => new { culture, index })
                     .FirstOrDefault(element => element.culture.Name == CultureInfo.CurrentCulture.Name)
                     .index;
             }
-        } else {
+        }
+        else
+        {
             // Get index from previously stored base language setting
             selectedLanguageIndex = _culturesAvailable.Select((culture, index) => new { culture, index })
                 .FirstOrDefault(pair => pair.culture.Name == baseLanguageIdProperty.stringValue)
@@ -73,26 +82,31 @@ public class YarnImporterEditor : ScriptedImporterEditor {
         }
 
         // Assets imported with older code should be reimported so we have a reference to the YarnProgram
-        if (serializedObject.FindProperty("programContainer").objectReferenceValue == null) {
+        if (serializedObject.FindProperty("programContainer").objectReferenceValue == null)
+        {
             (target as YarnImporter).SaveAndReimport();
             serializedObject.Update();
         }
         // Get all yarn lines of all languages so we can line hint them on the voice overs list
         var _yarnProgram = serializedObject.FindProperty("programContainer").objectReferenceValue as YarnProgram;
-        if (_yarnProgram) {
+        if (_yarnProgram)
+        {
             _allLanguagesStringTable.Add(baseLanguageIdProperty.stringValue, _yarnProgram.GetStringTable(baseLanguageIdProperty.stringValue));
-            foreach (var language in _yarnProgram.localizations) {
+            foreach (var language in _yarnProgram.localizations)
+            {
                 _allLanguagesStringTable.Add(language.languageName, _yarnProgram.GetStringTable(language.languageName));
             }
         }
     }
 
-    public override void OnDisable() {
+    public override void OnDisable()
+    {
         base.OnDisable();
     }
 
 
-    public override void OnInspectorGUI() {
+    public override void OnInspectorGUI()
+    {
         serializedObject.Update();
         EditorGUILayout.Space();
         YarnImporter yarnImporter = (target as YarnImporter);
@@ -111,7 +125,8 @@ public class YarnImporterEditor : ScriptedImporterEditor {
         selectedLanguageIndex = EditorGUILayout.Popup("Base Language", selectedLanguageIndex, Cultures.CulturesToDisplayNames(_culturesAvailable));
         baseLanguageIdProperty.stringValue = _culturesAvailable[selectedLanguageIndex].Name;
 
-        if (yarnImporter.isSuccesfullyCompiled == false) {
+        if (yarnImporter.isSuccesfullyCompiled == false)
+        {
             EditorGUILayout.HelpBox(yarnImporter.compilationErrorMessage, MessageType.Error);
             return;
         }
@@ -121,15 +136,18 @@ public class YarnImporterEditor : ScriptedImporterEditor {
         var canCreateLocalisation = yarnImporter.StringsAvailable == true && yarnImporter.AnyImplicitStringIDs == false;
 
         using (new EditorGUI.DisabledScope(!canCreateLocalisation))
-        using (new EditorGUILayout.HorizontalScope()) {
+        using (new EditorGUILayout.HorizontalScope())
+        {
 
             var culturesAvailableNotOnAsset = _culturesAvailable.Except(Cultures.LanguageNamesToCultures(textLanguageNamesOnAsset)).ToArray();
             audioLanguageNamesOnAsset = audioLanguageNamesOnAsset.Except(Cultures.CulturesToNames(culturesAvailableNotOnAsset)).ToArray();
 
-            if (culturesAvailableNotOnAsset.Length > 0) {
+            if (culturesAvailableNotOnAsset.Length > 0)
+            {
                 selectedNewTranslationLanguageIndex = EditorGUILayout.Popup(selectedNewTranslationLanguageIndex, Cultures.CulturesToDisplayNames(culturesAvailableNotOnAsset));
 
-                if (GUILayout.Button("Create New Localisation", EditorStyles.miniButton)) {
+                if (GUILayout.Button("Create New Localisation", EditorStyles.miniButton))
+                {
                     var stringsTableText = AssetDatabase
                         .LoadAllAssetsAtPath(yarnImporter.assetPath)
                         .OfType<TextAsset>()
@@ -156,32 +174,40 @@ public class YarnImporterEditor : ScriptedImporterEditor {
                     // Automatically add newly created translation csv file to yarn program
                     var localizationsIndex = System.Array.FindIndex(yarnImporter.localizations, element => element.languageName == selectedCulture.Name);
                     var localizationSerializedProperty = serializedObject.FindProperty("localizations");
-                    if (localizationsIndex != -1) {
+                    if (localizationsIndex != -1)
+                    {
                         localizationSerializedProperty.GetArrayElementAtIndex(localizationsIndex).FindPropertyRelative("text").objectReferenceValue = asset;
-                    } else {
+                    }
+                    else
+                    {
                         localizationSerializedProperty.InsertArrayElementAtIndex(localizationSerializedProperty.arraySize);
                         localizationSerializedProperty.GetArrayElementAtIndex(localizationSerializedProperty.arraySize - 1).FindPropertyRelative("text").objectReferenceValue = asset;
                         localizationSerializedProperty.GetArrayElementAtIndex(localizationSerializedProperty.arraySize - 1).FindPropertyRelative("languageName").stringValue = selectedCulture.Name;
                     }
                 }
-            } else {
+            }
+            else
+            {
                 EditorGUILayout.HelpBox("Go to Project Settings if you want to add more translations.", MessageType.Info);
             }
 
         }
 
-        if (yarnImporter.StringsAvailable == false) {
+        if (yarnImporter.StringsAvailable == false)
+        {
             EditorGUILayout.HelpBox("This file doesn't contain any localisable lines or options.", MessageType.Info);
         }
 
-        if (yarnImporter.AnyImplicitStringIDs) {
+        if (yarnImporter.AnyImplicitStringIDs)
+        {
             EditorGUILayout.HelpBox("Add #line: tags to all lines and options to enable creating new localisations. Either add them manually, or click Add Line Tags to automatically add tags. Note that this will modify your files on disk, and cannot be undone.", MessageType.Info);
-            if (GUILayout.Button("Add Line Tags")) {
+            if (GUILayout.Button("Add Line Tags"))
+            {
                 AddLineTagsToFile(yarnImporter.assetPath);
             }
         }
         // Only update localizations if line tags exist and localizations exist
-        else if (yarnImporter .localizations.Length > 0)
+        else if (yarnImporter.localizations.Length > 0)
         {
             if (GUILayout.Button("Update Localizations"))
             {
@@ -206,20 +232,24 @@ public class YarnImporterEditor : ScriptedImporterEditor {
         // * search for $linetag but return asset with parent directory matching $language
         // * search for "$linetag-$language"
         // * search for "$language-$linetag"
-        if (GUILayout.Button("Import Voice Over Audio Files")) {
+        if (GUILayout.Button("Import Voice Over Audio Files"))
+        {
             // For every linetag of this yarn asset
-            for (int i = 0; i < yarnImporter.voiceOvers.Length; i++) {
+            for (int i = 0; i < yarnImporter.voiceOvers.Length; i++)
+            {
                 LinetagToLanguage linetagToLanguage = yarnImporter.voiceOvers[i];
                 var linetag = linetagToLanguage.linetag.Remove(0, 5);
                 // For every language of this yarn asset
-                for (int j = 0; j < linetagToLanguage.languageToAudioclip.Length; j++) {
+                for (int j = 0; j < linetagToLanguage.languageToAudioclip.Length; j++)
+                {
                     LanguageToAudioclip languageToAudioclip = linetagToLanguage.languageToAudioclip[j];
 
                     var language = languageToAudioclip.language;
                     string[] results = Yarn.Unity.FindVoiceOver.GetMatchingVoiceOverAudioClip(linetag, language);
 
                     // Write found AudioClip into voice overs array
-                    if (results.Length != 0) {
+                    if (results.Length != 0)
+                    {
                         var voiceOversProp = serializedObject.FindProperty("voiceOvers");
                         var linetagProp = voiceOversProp.GetArrayElementAtIndex(i).FindPropertyRelative("linetag");
                         var languagetoAudioClipProp = voiceOversProp.GetArrayElementAtIndex(i).FindPropertyRelative("languageToAudioclip");
@@ -236,19 +266,23 @@ public class YarnImporterEditor : ScriptedImporterEditor {
                         } else {
 #endif
 
-                            // Do not overwrite existing content
-                            if (audioclipProp.objectReferenceValue == null) {
-                                audioclipProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(AssetDatabase.GUIDToAssetPath(results[0]));
-                            }
+                        // Do not overwrite existing content
+                        if (audioclipProp.objectReferenceValue == null)
+                        {
+                            audioclipProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(AssetDatabase.GUIDToAssetPath(results[0]));
+                        }
 #if ADDRESSABLES
                         }
 #endif
                     }
 
                     // Return info if the search results were ambiguous or there was not result
-                    if (results.Length > 1) {
+                    if (results.Length > 1)
+                    {
                         Debug.LogWarning("More than one asset found matching the linetag " + linetag + "  and the language " + language + ".");
-                    } else if (results.Length == 0) {
+                    }
+                    else if (results.Length == 0)
+                    {
                         Debug.LogWarning("No asset found matching the linetag '" + linetag + "' and the language '" + language + "'.");
                     }
                 }
@@ -257,7 +291,8 @@ public class YarnImporterEditor : ScriptedImporterEditor {
         }
         // Voice over list. Reduced to one language.
         showVoiceovers = EditorGUILayout.Foldout(showVoiceovers, "Voice Overs"); // FIXME: Clicking on the foldout triangle doesn't open/close the foldout
-        if (showVoiceovers) {
+        if (showVoiceovers)
+        {
             EditorGUI.indentLevel++;
             // Language selected here will reduce the visual representation of the voice over data structure
             selectedVoiceoverLanguageIndex = EditorGUILayout.Popup(selectedVoiceoverLanguageIndex, Cultures.LanguageNamesToDisplayNames(audioLanguageNamesOnAsset), GUILayout.MaxWidth(96));
@@ -265,11 +300,14 @@ public class YarnImporterEditor : ScriptedImporterEditor {
             selectedVoiceoverLanguageIndex = Mathf.Min(audioLanguageNamesOnAsset.Length - 1, selectedVoiceoverLanguageIndex);
             var selectedVoiceOverLanguageExists = false;
             // Only draw AudioClips from selected language
-            for (int i = 0; i < yarnImporter.voiceOvers.Length; i++) {
+            for (int i = 0; i < yarnImporter.voiceOvers.Length; i++)
+            {
                 LinetagToLanguage linetagToLanguage = yarnImporter.voiceOvers[i];
-                for (int j = 0; j < linetagToLanguage.languageToAudioclip.Length; j++) {
+                for (int j = 0; j < linetagToLanguage.languageToAudioclip.Length; j++)
+                {
                     LanguageToAudioclip languageToAudioclip = linetagToLanguage.languageToAudioclip[j];
-                    if (languageToAudioclip.language == audioLanguageNamesOnAsset[selectedVoiceoverLanguageIndex]) {
+                    if (languageToAudioclip.language == audioLanguageNamesOnAsset[selectedVoiceoverLanguageIndex])
+                    {
                         selectedVoiceOverLanguageExists = true;
                         var voiceOversProp = serializedObject.FindProperty("voiceOvers");
                         var linetagProp = voiceOversProp.GetArrayElementAtIndex(i).FindPropertyRelative("linetag");
@@ -277,9 +315,10 @@ public class YarnImporterEditor : ScriptedImporterEditor {
                         var languageProp = languagetoAudioClipProp.GetArrayElementAtIndex(j).FindPropertyRelative("language");
                         var audioclipProp = languagetoAudioClipProp.GetArrayElementAtIndex(j).FindPropertyRelative("audioClip");
                         var label = linetagProp.stringValue;
-                        if (_allLanguagesStringTable.ContainsKey(languageProp.stringValue) && _allLanguagesStringTable[languageProp.stringValue].ContainsKey(linetagProp.stringValue)) {
+                        if (_allLanguagesStringTable.ContainsKey(languageProp.stringValue) && _allLanguagesStringTable[languageProp.stringValue].ContainsKey(linetagProp.stringValue))
+                        {
                             label = linetagProp.stringValue + " ('" + _allLanguagesStringTable[languageProp.stringValue][linetagProp.stringValue] + "')";
-                    	}
+                        }
 #if ADDRESSABLES
                         if (ProjectSettings.AddressableVoiceOverAudioClips) {
                             // Draw the assetref. Seems to ignore the label (https://forum.unity.com/threads/custom-inspector-for-a-list-of-addressables.575086/)
@@ -290,20 +329,24 @@ public class YarnImporterEditor : ScriptedImporterEditor {
                             EditorGUILayout.Space();
                         } else {
 #endif
-                            EditorGUILayout.BeginHorizontal();
-                            EditorGUILayout.LabelField(label);
-                            EditorGUILayout.PropertyField(audioclipProp, new GUIContent(""));
-                            EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField(label);
+                        EditorGUILayout.PropertyField(audioclipProp, new GUIContent(""));
+                        EditorGUILayout.EndHorizontal();
 #if ADDRESSABLES
                         }
 #endif
                     }
                 }
             }
-            if (!selectedVoiceOverLanguageExists) {
-                if (YarnProgram.GetStringTable(yarnImporter.baseLanguage).Count > 0) {
+            if (!selectedVoiceOverLanguageExists)
+            {
+                if (YarnProgram.GetStringTable(yarnImporter.baseLanguage).Count > 0)
+                {
                     EditorGUILayout.HelpBox(_audioVoiceOverInitializeHelpBox, MessageType.Info);
-                } else {
+                }
+                else
+                {
                     EditorGUILayout.HelpBox(_audioVoiceOverNoYarnLinesOnAsset, MessageType.Info);
                 }
             }
@@ -316,7 +359,8 @@ public class YarnImporterEditor : ScriptedImporterEditor {
             WriteChangesToDisk();
         }
 #endif
-        if (workaroundIsDirty) {
+        if (workaroundIsDirty)
+        {
             WriteChangesToDisk();
         }
 #if UNITY_2019_1_OR_NEWER
@@ -324,14 +368,16 @@ public class YarnImporterEditor : ScriptedImporterEditor {
 #endif
     }
 
-    private void WriteChangesToDisk() {
+    private void WriteChangesToDisk()
+    {
         EditorUtility.SetDirty(target);
         AssetDatabase.WriteImportSettingsIfDirty(AssetDatabase.GetAssetPath(target));
         AssetDatabase.ForceReserializeAssets(new string[] { AssetDatabase.GetAssetPath(target) }, ForceReserializeAssetsOptions.ReserializeAssetsAndMetadata);
         AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(target));
     }
 
-    private void AddLineTagsToFile(string assetPath) {
+    private void AddLineTagsToFile(string assetPath)
+    {
         // First, gather all existing line tags, so that we don't
         // accidentally overwrite an existing one. Do this by finding _all_
         // YarnPrograms, and by extension their importers, and get the
@@ -566,7 +612,7 @@ public class YarnImporterEditor : ScriptedImporterEditor {
             }
         }
     }
-    
+
     struct CsvEntry
     {
         public string id;
@@ -627,7 +673,7 @@ namespace Yarn.Unity
             return result;
         }
 
-        private static string[] GetAsseetsInMatchingLanguageDirectory (string[] result, string language)
+        private static string[] GetAsseetsInMatchingLanguageDirectory(string[] result, string language)
         {
             var list = new List<string>();
             foreach (var assetId in result)

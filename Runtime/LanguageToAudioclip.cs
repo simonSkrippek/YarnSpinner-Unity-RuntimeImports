@@ -6,25 +6,27 @@ using UnityEngine.AddressableAssets;
 
 namespace Yarn.Unity
 {
-/// <summary>
-/// A voice over <see cref="AudioClip"/> and its associated language.
-/// </summary>
-[Serializable]
-public class LanguageToAudioclip {
-    public LanguageToAudioclip(string Language, AudioClip AudioClip = null) {
-        language = Language;
-        audioClip = AudioClip;
-    }
-
     /// <summary>
-    /// The language ID (e.g. "en" or "de).
+    /// A voice over <see cref="AudioClip"/> and its associated language.
     /// </summary>
-    public string language;
+    [Serializable]
+    public class LanguageToAudioclip
+    {
+        public LanguageToAudioclip(string Language, AudioClip AudioClip = null)
+        {
+            language = Language;
+            audioClip = AudioClip;
+        }
 
-    /// <summary>
-    /// The <see cref="AudioClip"/> associated with the <see cref="language"/> ID.
-    /// </summary>
-    public AudioClip audioClip;
+        /// <summary>
+        /// The language ID (e.g. "en" or "de).
+        /// </summary>
+        public string language;
+
+        /// <summary>
+        /// The <see cref="AudioClip"/> associated with the <see cref="language"/> ID.
+        /// </summary>
+        public AudioClip audioClip;
 #if ADDRESSABLES
     /// <summary>
     /// The <see cref="AudioClip"/> stored as <see cref="AssetReference"/> 
@@ -33,5 +35,5 @@ public class LanguageToAudioclip {
     /// </summary>
     public AssetReference audioClipAddressable;
 #endif
-}
+    }
 }

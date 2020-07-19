@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Globalization;
+using UnityEngine;
 
 namespace Yarn.Unity
 {

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 using UnityEngine.UI;
-using Yarn.Unity;
 
 namespace Yarn.Unity.Example
 {
@@ -120,7 +119,7 @@ namespace Yarn.Unity.Example
                 dropdown.ClearOptions();
                 dropdown.AddOptions(languageList);
 #if UNITY_2019_1_OR_NEWER
-            dropdown.SetValueWithoutNotify(selectedLanguageIndex);
+                dropdown.SetValueWithoutNotify(selectedLanguageIndex);
 #else
                 dropdown.value = selectedLanguageIndex;
 #endif
@@ -131,7 +130,7 @@ namespace Yarn.Unity.Example
                 tmpDropdown.ClearOptions();
                 tmpDropdown.AddOptions(languageList);
 #if UNITY_2019_1_OR_NEWER
-            tmpDropdown.SetValueWithoutNotify(selectedLanguageIndex);
+                tmpDropdown.SetValueWithoutNotify(selectedLanguageIndex);
 #else
                 tmpDropdown.value = selectedLanguageIndex;
 #endif
