@@ -5,7 +5,6 @@
         "Unity.Addressables",
         "Unity.Addressables.Editor"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -14,5 +13,13 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.addressables",
+            "expression": "1.8.3",
+            "define": "ADDRESSABLES"
+        }
+    ],
+    "noEngineReferences": false
 }

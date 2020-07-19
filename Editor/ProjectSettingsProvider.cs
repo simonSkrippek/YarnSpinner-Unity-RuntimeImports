@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+#if ADDRESSABLES
+using UnityEditor.Experimental.AssetImporters;
+#endif
 using UnityEditorInternal;
 using UnityEngine;
 #if UNITY_2018
