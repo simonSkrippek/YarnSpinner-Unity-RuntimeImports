@@ -111,7 +111,7 @@ namespace Yarn.Unity
         /// ID.)</param>
         /// <param name="value">The user-facing text for this string, in the
         /// language specified by <see cref="LocaleCode"/>.</param>
-        internal void AddLocalisedStringToAsset(string key, string value)
+        public void AddLocalisedStringToAsset(string key, string value)
         {
             GetOrCreateEntry(key).localizedString = value;
         }
