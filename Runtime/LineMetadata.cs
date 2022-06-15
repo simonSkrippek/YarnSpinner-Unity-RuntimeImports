@@ -13,7 +13,7 @@ namespace Yarn.Unity
         [SerializeField]
         private StringDictionary _lineMetadata = new StringDictionary();
 
-        internal LineMetadata(IEnumerable<LineMetadataTableEntry> lineMetadataTableEntries)
+        public LineMetadata(IEnumerable<LineMetadataTableEntry> lineMetadataTableEntries)
         {
             AddMetadata(lineMetadataTableEntries);
         }
@@ -24,7 +24,7 @@ namespace Yarn.Unity
         /// whitespace.
         /// </summary>
         /// <param name="lineMetadataTableEntries">IEnumerable with metadata entries.</param>
-        internal void AddMetadata(IEnumerable<LineMetadataTableEntry> lineMetadataTableEntries)
+        public void AddMetadata(IEnumerable<LineMetadataTableEntry> lineMetadataTableEntries)
         {
             foreach (var entry in lineMetadataTableEntries)
             {

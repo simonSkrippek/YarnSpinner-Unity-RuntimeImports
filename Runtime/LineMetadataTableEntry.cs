@@ -13,7 +13,7 @@ namespace Yarn.Unity
     /// Only used internally as an intermediary before persisting information
     /// in either a `YarnProject` or a CSV file.
     /// </summary>
-    internal struct LineMetadataTableEntry
+    public struct LineMetadataTableEntry
     {
         /// <summary>
         /// The line ID for this line.
