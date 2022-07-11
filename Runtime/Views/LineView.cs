@@ -394,6 +394,8 @@ namespace Yarn.Unity
                     lineText.text = LineView.AddLineBreaks(text);
                 }
 
+                lineText.text = lineText.text.Replace('^', '\n');
+
                 if (useTypewriterEffect)
                 {
                     // If we're using the typewriter effect, hide all of the
